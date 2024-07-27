@@ -1,0 +1,97 @@
+// Mock API
+const mockAPI = {
+    fetchStockData: async (symbol) => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return {
+            symbol: symbol,
+            price: Math.random() * 1000,
+            change: (Math.random() - 0.5) * 10,
+            historicalPrices: Array.from({length: 30}, () => Math.random() * 1000)
+        };
+    }
+};
+
+// Chart initialization
+function initChart(chartId, label, data) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: data.length}, (_, i) => i + 1),
+            datasets: [{
+                label: label,
+                data: data,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+// Search functionality
+async function performSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const symbol = searchInput.value.toUpperCase();
+    
+    if (!symbol) {
+        alert('Please enter a stock symbol');
+        return;
+    }
+
+    document.getElementById('loadingIndicator').style.display = 'block';
+    
+    try {
+        const stockData = await mockAPI.fetchStockData(symbol);
+        updateStockAnalysis(stockData);
+        document.getElementById('loadingIndicator').style.display = 'none';
+        openModal('analysisModal');
+    } catch (error) {
+        console.error('Error fetching stock data:', error);
+        alert('Failed to fetch stock data. Please try again.');
+        document.getElementById('loadingIndicator').style.display = 'none';
+    }
+}
+
+// Update UI with stock data
+function updateStockAnalysis(data) {
+    document.getElementById('analysisStockSymbol').textContent = data.symbol;
+    
+    initChart('detailedStockChart', data.symbol, data.historicalPrices);
+    initChart('stockChart', data.symbol, data.historicalPrices);
+
+    const analysisDiv = document.getElementById('detailedAnalysis');
+    analysisDiv.innerHTML = `
+        <p>Current Price: $${data.price.toFixed(2)}</p>
+        <p>Change: ${data.change.toFixed(2)}%</p>
+    `;
+}
+
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Dark mode toggle
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+}
+
+// Event listeners
+document.getElementById('searchButton').addEventListener('click', performSearch);
+document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+document.querySelector('.close').addEventListener('click', () => closeModal('analysisModal'));
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    if (event.target.className === 'modal') {
+        event.target.style.display = 'none';
+    }
+}

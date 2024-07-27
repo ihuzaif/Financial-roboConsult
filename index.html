@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fintech RoboConsult</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Fintech RoboConsult</h1>
+        <button id="darkModeToggle">Toggle Dark Mode</button>
+    </header>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Enter stock symbol...">
+            <button id="searchButton">Search</button>
+        </div>
+        <div id="loadingIndicator" style="display: none;">Loading...</div>
+        <div class="dashboard">
+            <div class="card">
+                <h2>Stock Analysis</h2>
+                <canvas id="stockChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div id="analysisModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Detailed Analysis: <span id="analysisStockSymbol"></span></h2>
+            <canvas id="detailedStockChart"></canvas>
+            <div id="detailedAnalysis"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
